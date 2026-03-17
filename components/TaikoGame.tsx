@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { useTaikoGame } from "@/hooks/useTaikoGame";
 import { BODY_PART_COLORS } from "@/lib/rhythmPatterns";
 
@@ -11,6 +11,21 @@ export default function TaikoGame() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { phase, score, hitCount, error, isMuted, loadModel, startGame, stopGame, toggleMute } = useTaikoGame(videoRef, canvasRef);
+  const [bestScore, setBestScore] = useState<number | null>(null);
+
+  useEffect(() => {
+    const b = localStorage.getItem("taiko_best");
+    if (b) setBestScore(parseInt(b));
+  }, []);
+
+  const handleStop = useCallback(() => {
+    const prev = parseInt(localStorage.getItem("taiko_best") ?? "0");
+    if (score > prev) {
+      localStorage.setItem("taiko_best", String(score));
+      setBestScore(score);
+    }
+    stopGame();
+  }, [score, stopGame]);
 
   const shareText = `🥁 全身太鼓ZENSHINで${hitCount}回ヒット！\nスコア: ${score}点\n体で太鼓を叩いてみた！\n#全身太鼓 #ZENSHINTAIKO\nhttps://zenshin-taiko.vercel.app`;
   const shareUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText);
@@ -23,7 +38,12 @@ export default function TaikoGame() {
       <div className="w-full max-w-sm flex items-center justify-between px-3 py-2">
         <a href="/" className="text-amber-600 text-sm">← トップ</a>
         <span className="font-black text-base" style={{ color: "#fbbf24" }}>🥁 全身太鼓</span>
-        <button onClick={toggleMute} className="text-xl">{isMuted ? "🔇" : "🔊"}</button>
+        <div className="flex items-center gap-2">
+          {bestScore !== null && (
+            <span className="text-xs text-yellow-500">🏆{bestScore}</span>
+          )}
+          <button onClick={toggleMute} className="text-xl">{isMuted ? "🔇" : "🔊"}</button>
+        </div>
       </div>
 
       {/* Canvas area */}
@@ -96,7 +116,7 @@ export default function TaikoGame() {
       {phase === "playing" && (
         <div className="w-full max-w-sm px-3 mt-3 space-y-2">
           <div className="flex gap-2">
-            <button onClick={stopGame}
+            <button onClick={handleStop}
               className="flex-1 py-2 rounded-xl font-bold text-sm transition-all active:scale-95"
               style={{ background: "rgba(239,68,68,0.2)", color: "#fca5a5", border: "1px solid rgba(239,68,68,0.3)" }}>
               停止
