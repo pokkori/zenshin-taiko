@@ -38,6 +38,12 @@ export default function HomePage() {
           </div>
         ))}
       </div>
+      <footer className="mt-10 text-center text-xs text-amber-900 pb-6">
+        <p>© 2026 ポッコリラボ</p>
+        <p className="mt-1">
+          <a href="https://twitter.com/levona_design" className="underline hover:text-amber-700">お問い合わせ: X @levona_design</a>
+        </p>
+      </footer>
     </div>
   );
 }
