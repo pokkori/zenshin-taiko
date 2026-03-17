@@ -1,10 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
 export default function HomePage() {
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center px-4 py-12"
       style={{ background: "linear-gradient(160deg, #0a0500, #1a0a00, #0a0500)" }}>
       <div className="text-center mb-8">
-        <div className="text-8xl mb-3" style={{ filter: "drop-shadow(0 0 24px rgba(239,68,68,0.7))" }}>🥁</div>
+        <Image src="/images/taiko.png" alt="太鼓" width={120} height={120} className="mx-auto mb-3" style={{ filter: "drop-shadow(0 0 24px rgba(239,68,68,0.7))" }} priority />
         <h1 className="text-4xl font-black mb-1"
           style={{ color: "#fbbf24", textShadow: "0 0 20px rgba(251,191,36,0.5)" }}>
           全身太鼓
@@ -19,7 +20,7 @@ export default function HomePage() {
           color: "#fff",
           boxShadow: "0 0 30px rgba(239,68,68,0.5)",
         }}>
-        演奏スタート 🥁
+        演奏スタート
       </Link>
       <div className="w-full max-w-sm space-y-3">
         {[
