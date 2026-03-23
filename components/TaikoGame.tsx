@@ -4,6 +4,7 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { useTaikoGame } from "@/hooks/useTaikoGame";
 import { BODY_PART_COLORS } from "@/lib/rhythmPatterns";
 import dynamic from "next/dynamic";
+import { updateStreak, loadStreak, getStreakMilestoneMessage, type StreakData } from "@/lib/streak";
 
 const RhythmGame = dynamic(() => import("@/components/RhythmGame"), { ssr: false });
 
@@ -18,10 +19,12 @@ export default function TaikoGame() {
   const { phase, score, hitCount, error, isMuted, loadModel, startGame, stopGame, toggleMute } = useTaikoGame(videoRef, canvasRef);
   const [bestScore, setBestScore] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("rhythm");
+  const [streakData, setStreakData] = useState<StreakData | null>(null);
 
   useEffect(() => {
     const b = localStorage.getItem("taiko_best");
     if (b) setBestScore(parseInt(b));
+    setStreakData(loadStreak("zenshin_taiko"));
   }, []);
 
   // タブ切り替え時にカメラ版が再生中なら停止
@@ -38,6 +41,8 @@ export default function TaikoGame() {
       localStorage.setItem("taiko_best", String(score));
       setBestScore(score);
     }
+    const updated = updateStreak("zenshin_taiko");
+    setStreakData(updated);
     stopGame();
   }, [score, stopGame]);
 
@@ -126,7 +131,16 @@ export default function TaikoGame() {
                 style={{ background: "rgba(0,0,0,0.85)" }}>
                 <div className="text-6xl mb-4">🥁</div>
                 <h2 className="text-2xl font-black mb-2" style={{ color: "#fbbf24" }}>全身太鼓</h2>
-                <p className="text-amber-300 text-sm text-center px-8 mb-6">体全体が太鼓になる！<br />カメラを許可してプレイ開始</p>
+                <p className="text-amber-300 text-sm text-center px-8 mb-4">体全体が太鼓になる！<br />カメラを許可してプレイ開始</p>
+                {streakData && streakData.count > 0 && (
+                  <div className="mb-4 px-4 py-2 rounded-xl text-center"
+                    style={{ background: "rgba(251,191,36,0.15)", border: "1px solid rgba(251,191,36,0.3)" }}>
+                    <p className="text-yellow-300 font-bold text-sm">{streakData.count}日連続プレイ中</p>
+                    {getStreakMilestoneMessage(streakData.count) && (
+                      <p className="text-amber-400 text-xs mt-0.5">{getStreakMilestoneMessage(streakData.count)}</p>
+                    )}
+                  </div>
+                )}
                 <button onClick={loadModel}
                   className="px-10 py-3 rounded-xl font-black text-white transition-all active:scale-95 min-h-[44px]"
                   aria-label="カメラを起動してAIモデルを読み込む"
