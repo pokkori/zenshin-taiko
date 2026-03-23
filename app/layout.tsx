@@ -24,6 +24,25 @@ export const metadata: Metadata = {
     images: [`${SITE_URL}/og.png`],
   },
 };
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "全身太鼓",
+  "description": "カメラで全身の動きを検出してリズムゲームを楽しむWebアプリ",
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "Web",
+  "url": "https://zenshin-taiko.vercel.app",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+  "genre": "Rhythm Game"
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="ja"><body>{children}</body></html>;
+  return (
+    <html lang="ja">
+      <head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      </head>
+      <body>{children}</body>
+    </html>
+  );
 }
