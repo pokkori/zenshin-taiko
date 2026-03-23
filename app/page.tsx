@@ -45,6 +45,10 @@ export default function HomePage() {
         <p className="mt-1">
           <a href="https://twitter.com/levona_design" className="underline hover:text-amber-700" aria-label="Xでお問い合わせ（@levona_design）">お問い合わせ: X @levona_design</a>
         </p>
+        <div className="mt-2 space-x-4">
+          <a href="/privacy" className="underline hover:text-amber-700" aria-label="プライバシーポリシーを見る">プライバシーポリシー</a>
+          <a href="/legal" className="underline hover:text-amber-700" aria-label="特定商取引法に基づく表記を見る">特商法表記</a>
+        </div>
       </footer>
     </div>
   );
