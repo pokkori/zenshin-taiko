@@ -14,7 +14,8 @@ export default function HomePage() {
         <p className="text-amber-600 text-sm">体を動かして太鼓を演奏！</p>
       </div>
       <Link href="/game"
-        className="inline-block px-14 py-4 rounded-2xl text-xl font-black mb-8 transition-all active:scale-95"
+        className="inline-block px-14 py-4 rounded-2xl text-xl font-black mb-8 transition-all active:scale-95 min-h-[44px]"
+        aria-label="全身太鼓ゲームを開始する"
         style={{
           background: "linear-gradient(135deg, #ef4444, #991b1b)",
           color: "#fff",
@@ -42,7 +43,7 @@ export default function HomePage() {
       <footer className="mt-10 text-center text-xs text-amber-900 pb-6">
         <p>© 2026 ポッコリラボ</p>
         <p className="mt-1">
-          <a href="https://twitter.com/levona_design" className="underline hover:text-amber-700">お問い合わせ: X @levona_design</a>
+          <a href="https://twitter.com/levona_design" className="underline hover:text-amber-700" aria-label="Xでお問い合わせ（@levona_design）">お問い合わせ: X @levona_design</a>
         </p>
       </footer>
     </div>
