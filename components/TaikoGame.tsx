@@ -50,14 +50,14 @@ export default function TaikoGame() {
 
       {/* Header */}
       <div className="w-full max-w-sm flex items-center justify-between px-3 py-2">
-        <a href="/" className="text-amber-600 text-sm">← トップ</a>
-        <span className="font-black text-base" style={{ color: "#fbbf24" }}>🥁 全身太鼓</span>
+        <a href="/" className="text-amber-600 text-sm" aria-label="トップページに戻る">← トップ</a>
+        <span className="font-black text-base" style={{ color: "#fbbf24" }}>全身太鼓</span>
         <div className="flex items-center gap-2">
           {bestScore !== null && (
-            <span className="text-xs text-yellow-500">🏆{bestScore}</span>
+            <span className="text-xs text-yellow-500" aria-label={`ベストスコア ${bestScore}点`}>Best:{bestScore}</span>
           )}
           {activeTab === "camera" && (
-            <button onClick={toggleMute} className="text-xl">{isMuted ? "🔇" : "🔊"}</button>
+            <button onClick={toggleMute} className="text-xl min-h-[44px] min-w-[44px]" aria-label={isMuted ? "ミュートを解除する" : "ミュートにする"}>{isMuted ? "消音" : "音ON"}</button>
           )}
         </div>
       </div>
@@ -68,7 +68,9 @@ export default function TaikoGame() {
           style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
           <button
             onClick={() => handleTabChange("rhythm")}
-            className="flex-1 py-2 text-sm font-bold transition-all"
+            className="flex-1 py-2 text-sm font-bold transition-all min-h-[44px]"
+            aria-label="リズムモードに切り替え"
+            aria-pressed={activeTab === "rhythm"}
             style={{
               background: activeTab === "rhythm"
                 ? "linear-gradient(135deg,#ef4444,#991b1b)"
@@ -76,11 +78,13 @@ export default function TaikoGame() {
               color: activeTab === "rhythm" ? "#fff" : "#78350f",
             }}
           >
-            🎮 リズムモード
+            リズムモード
           </button>
           <button
             onClick={() => handleTabChange("camera")}
-            className="flex-1 py-2 text-sm font-bold transition-all"
+            className="flex-1 py-2 text-sm font-bold transition-all min-h-[44px]"
+            aria-label="全身カメラモードに切り替え"
+            aria-pressed={activeTab === "camera"}
             style={{
               background: activeTab === "camera"
                 ? "linear-gradient(135deg,#f97316,#c2410c)"
@@ -88,7 +92,7 @@ export default function TaikoGame() {
               color: activeTab === "camera" ? "#fff" : "#78350f",
             }}
           >
-            📷 全身モード
+            全身モード
           </button>
         </div>
       </div>
@@ -111,6 +115,8 @@ export default function TaikoGame() {
               width={CANVAS_W}
               height={CANVAS_H}
               className="w-full rounded-2xl"
+              role="img"
+              aria-label="全身太鼓ゲームキャンバス — 体の動きを検出して太鼓を演奏"
               style={{ maxHeight: "70dvh", objectFit: "contain", background: "#0a0500" }}
             />
 
@@ -122,9 +128,10 @@ export default function TaikoGame() {
                 <h2 className="text-2xl font-black mb-2" style={{ color: "#fbbf24" }}>全身太鼓</h2>
                 <p className="text-amber-300 text-sm text-center px-8 mb-6">体全体が太鼓になる！<br />カメラを許可してプレイ開始</p>
                 <button onClick={loadModel}
-                  className="px-10 py-3 rounded-xl font-black text-white transition-all active:scale-95"
+                  className="px-10 py-3 rounded-xl font-black text-white transition-all active:scale-95 min-h-[44px]"
+                  aria-label="カメラを起動してAIモデルを読み込む"
                   style={{ background: "linear-gradient(135deg,#ef4444,#991b1b)", boxShadow: "0 0 20px rgba(239,68,68,0.4)" }}>
-                  カメラを起動 📷
+                  カメラを起動
                 </button>
               </div>
             )}
@@ -147,9 +154,10 @@ export default function TaikoGame() {
                 <p className="text-amber-300 font-bold mb-2">準備完了！</p>
                 <p className="text-amber-600 text-xs text-center px-6 mb-4">カメラ前から1～2m離れて<br />全身が映るようにしてください</p>
                 <button onClick={startGame}
-                  className="px-10 py-3 rounded-xl font-black text-white transition-all active:scale-95"
+                  className="px-10 py-3 rounded-xl font-black text-white transition-all active:scale-95 min-h-[44px]"
+                  aria-label="演奏をスタートする"
                   style={{ background: "linear-gradient(135deg,#ef4444,#991b1b)" }}>
-                  演奏スタート！🥁
+                  演奏スタート！
                 </button>
               </div>
             )}
@@ -161,7 +169,8 @@ export default function TaikoGame() {
                 <div className="text-4xl mb-3">😢</div>
                 <p className="text-red-400 text-sm text-center px-6">{error}</p>
                 <button onClick={() => window.location.reload()}
-                  className="mt-4 px-8 py-2 rounded-xl font-bold text-white text-sm"
+                  className="mt-4 px-8 py-2 rounded-xl font-bold text-white text-sm min-h-[44px]"
+                  aria-label="ページをリロードして再試行する"
                   style={{ background: "rgba(255,255,255,0.1)" }}>
                   リロード
                 </button>
@@ -174,12 +183,14 @@ export default function TaikoGame() {
             <div className="w-full max-w-sm px-3 mt-3 space-y-2">
               <div className="flex gap-2">
                 <button onClick={handleStop}
-                  className="flex-1 py-2 rounded-xl font-bold text-sm transition-all active:scale-95"
+                  className="flex-1 py-2 rounded-xl font-bold text-sm transition-all active:scale-95 min-h-[44px]"
+                  aria-label="演奏を停止してスコアを記録する"
                   style={{ background: "rgba(239,68,68,0.2)", color: "#fca5a5", border: "1px solid rgba(239,68,68,0.3)" }}>
                   停止
                 </button>
                 <a href={shareUrl} target="_blank" rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl font-bold text-sm"
+                  className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl font-bold text-sm min-h-[44px]"
+                  aria-label="Xでスコアをシェアする"
                   style={{ background: "#000", color: "#fff" }}>
                   <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
