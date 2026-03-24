@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#dc2626"/>
+      <stop offset="100%" style="stop-color:#f97316"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="60" y="60" width="1080" height="510" rx="24" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+  <text x="600" y="280" text-anchor="middle" fill="white" font-size="72" font-weight="bold" font-family="sans-serif">全身太鼓</text>
+  <text x="600" y="370" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="36" font-family="sans-serif">体全体でリズムを刻め</text>
+</svg>
