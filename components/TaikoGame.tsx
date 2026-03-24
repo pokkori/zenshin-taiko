@@ -20,6 +20,8 @@ export default function TaikoGame() {
   const [bestScore, setBestScore] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("rhythm");
   const [streakData, setStreakData] = useState<StreakData | null>(null);
+  const [lastScore, setLastScore] = useState<number | null>(null);
+  const [lastHitCount, setLastHitCount] = useState<number | null>(null);
 
   useEffect(() => {
     const b = localStorage.getItem("taiko_best");
@@ -43,10 +45,12 @@ export default function TaikoGame() {
     }
     const updated = updateStreak("zenshin_taiko");
     setStreakData(updated);
+    setLastScore(score);
+    setLastHitCount(hitCount);
     stopGame();
-  }, [score, stopGame]);
+  }, [score, hitCount, stopGame]);
 
-  const shareText = `🥁 全身太鼓ZENSHINで${hitCount}回ヒット！\nスコア: ${score}点\n体で太鼓を叩いてみた！\n#全身太鼓 #ZENSHINTAIKO\nhttps://zenshin-taiko.vercel.app`;
+  const shareText = ` 全身太鼓ZENSHINで${hitCount}回ヒット！\nスコア: ${score}点\n体で太鼓を叩いてみた！\n#全身太鼓 #ZENSHINTAIKO\nhttps://zenshin-taiko.vercel.app`;
   const shareUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText);
 
   return (
@@ -129,7 +133,7 @@ export default function TaikoGame() {
             {phase === "idle" && (
               <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl"
                 style={{ background: "rgba(0,0,0,0.85)" }}>
-                <div className="text-6xl mb-4">🥁</div>
+                <div className="text-6xl mb-4"></div>
                 <h2 className="text-2xl font-black mb-2" style={{ color: "#fbbf24" }}>全身太鼓</h2>
                 <p className="text-amber-300 text-sm text-center px-8 mb-4">体全体が太鼓になる！<br />カメラを許可してプレイ開始</p>
                 {streakData && streakData.count > 0 && (
@@ -154,7 +158,7 @@ export default function TaikoGame() {
             {phase === "loading" && (
               <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl"
                 style={{ background: "rgba(0,0,0,0.85)" }}>
-                <div className="text-4xl mb-4 animate-spin">🥁</div>
+                <div className="text-4xl mb-4 animate-spin"></div>
                 <p className="text-amber-300 animate-pulse">AIモデル読み込み中...</p>
                 <p className="text-amber-600 text-xs mt-2">初回は30秒ほどかかります</p>
               </div>
@@ -164,9 +168,29 @@ export default function TaikoGame() {
             {phase === "ready" && (
               <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl"
                 style={{ background: "rgba(0,0,0,0.85)" }}>
-                <div className="text-5xl mb-3">🎉</div>
+                <div className="text-5xl mb-3"></div>
                 <p className="text-amber-300 font-bold mb-2">準備完了！</p>
                 <p className="text-amber-600 text-xs text-center px-6 mb-4">カメラ前から1～2m離れて<br />全身が映るようにしてください</p>
+                {/* 直前のスコア結果 */}
+                {lastScore !== null && (
+                  <div className="mb-4 px-5 py-3 rounded-2xl text-center w-full max-w-xs"
+                    style={{ background: "rgba(251,191,36,0.12)", border: "1px solid rgba(251,191,36,0.3)" }}>
+                    <p className="text-yellow-300 font-black text-lg">{lastScore}点 / {lastHitCount}回ヒット</p>
+                    <a
+                      href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`全身太鼓で${lastScore}点達成！${lastHitCount}回ヒット！ #全身太鼓ゲーム https://zenshin-taiko.vercel.app`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="全身太鼓のスコアをXでシェアする"
+                      className="flex items-center justify-center gap-2 mt-2 w-full py-2 rounded-xl font-bold text-sm min-h-[44px] transition-colors hover:bg-gray-800"
+                      style={{ background: "#000", color: "#fff" }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                      </svg>
+                      Xでシェア
+                    </a>
+                  </div>
+                )}
                 <button onClick={startGame}
                   className="px-10 py-3 rounded-xl font-black text-white transition-all active:scale-95 min-h-[44px]"
                   aria-label="演奏をスタートする"
@@ -180,7 +204,7 @@ export default function TaikoGame() {
             {(phase === "error" || error) && (
               <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl"
                 style={{ background: "rgba(0,0,0,0.85)" }}>
-                <div className="text-4xl mb-3">😢</div>
+                <div className="text-4xl mb-3"></div>
                 <p className="text-red-400 text-sm text-center px-6">{error}</p>
                 <button onClick={() => window.location.reload()}
                   className="mt-4 px-8 py-2 rounded-xl font-bold text-white text-sm min-h-[44px]"
