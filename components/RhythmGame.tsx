@@ -329,22 +329,22 @@ export default function RhythmGame() {
   }, []);
 
   // ===== シェア =====
-  const shareText = `【全身太鼓】リズムチャレンジで${score}点！\n${maxCombo}コンボ達成🥁\nあなたも挑戦 → https://zenshin-taiko.vercel.app\n#全身太鼓 #リズムゲーム`;
+  const shareText = `【全身太鼓】リズムチャレンジで${score}点！\n${maxCombo}コンボ達成\nあなたも挑戦 → https://zenshin-taiko.vercel.app\n#全身太鼓 #リズムゲーム`;
   const shareUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText);
 
   // ===== Idle画面 =====
   if (gameState === "idle") {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60dvh] px-4 py-8 select-none">
-        <div className="text-7xl mb-4">🥁</div>
+        <div className="text-7xl mb-4"></div>
         <h2 className="text-2xl font-black mb-1" style={{ color: "#fbbf24" }}>リズムチャレンジ</h2>
         <p className="text-amber-400 text-sm text-center mb-2">カメラ不要！タップでリズムゲーム</p>
         <div className="mb-6 space-y-2 w-full max-w-xs">
           {[
-            { icon: "🔵", text: "左エリアをタップ → 左拍子" },
-            { icon: "🔴", text: "右エリアをタップ → 右拍子" },
-            { icon: "🟡", text: "両エリア同時 → ドン！" },
-            { icon: "⏱️", text: "30秒間でハイスコアを目指せ" },
+            { icon: "", text: "左エリアをタップ → 左拍子" },
+            { icon: "", text: "右エリアをタップ → 右拍子" },
+            { icon: "", text: "両エリア同時 → ドン！" },
+            { icon: "️", text: "30秒間でハイスコアを目指せ" },
           ].map((item, i) => (
             <div key={i} className="flex gap-2 items-center text-sm text-amber-300">
               <span>{item.icon}</span>
@@ -354,6 +354,7 @@ export default function RhythmGame() {
         </div>
         <button
           onClick={startGame}
+          aria-label="ゲームをスタートする"
           className="px-12 py-4 rounded-2xl font-black text-white text-lg transition-all active:scale-95"
           style={{
             background: "linear-gradient(135deg,#ef4444,#991b1b)",
@@ -375,7 +376,7 @@ export default function RhythmGame() {
 
     return (
       <div className="flex flex-col items-center px-4 py-8 select-none">
-        <div className="text-5xl mb-3">🎊</div>
+        <div className="text-5xl mb-3"></div>
         <h2 className="text-xl font-black mb-4" style={{ color: "#fbbf24" }}>リザルト</h2>
 
         <div className="w-full max-w-xs rounded-2xl p-5 mb-4 space-y-3"
@@ -423,6 +424,7 @@ export default function RhythmGame() {
         <div className="flex gap-2 w-full max-w-xs">
           <button
             onClick={startGame}
+            aria-label="もう一度プレイする"
             className="flex-1 py-3 rounded-xl font-bold text-sm transition-all active:scale-95"
             style={{ background: "linear-gradient(135deg,#ef4444,#991b1b)", color: "#fff" }}
           >
@@ -459,11 +461,12 @@ export default function RhythmGame() {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs font-black" style={{ color: timeLeft <= 10 ? "#ef4444" : "#22c55e" }}>
-            ⏱ {timeLeft}s
+             {timeLeft}s
           </span>
           <button onClick={() => { isMutedRef.current = !isMutedRef.current; setIsMuted(isMutedRef.current); }}
+            aria-label={isMuted ? "サウンドをオンにする" : "サウンドをオフにする（ミュート）"}
             className="text-base">
-            {isMuted ? "🔇" : "🔊"}
+            {isMuted ? "" : ""}
           </button>
         </div>
       </div>
@@ -474,7 +477,7 @@ export default function RhythmGame() {
           <span className="text-base font-black animate-bounce"
             style={{ color: JUDGMENT_COLORS[lastJudgment] }}>
             {lastJudgment}
-            {lastJudgment === "PERFECT" && " ✨"}
+            {lastJudgment === "PERFECT" && " "}
           </span>
         )}
       </div>
@@ -527,7 +530,7 @@ function RhythmZone({ zone, markers, onTap, getMarkerStyle, effects }: RhythmZon
   const [pressed, setPressed] = useState(false);
   const color = ZONE_COLORS[zone];
   const label = zone === "left" ? "左\nLEFT" : "右\nRIGHT";
-  const icon = zone === "left" ? "👈" : "👉";
+  const icon = zone === "left" ? "" : "";
 
   const handlePress = () => {
     setPressed(true);
@@ -583,7 +586,7 @@ function RhythmZone({ zone, markers, onTap, getMarkerStyle, effects }: RhythmZon
             fontSize: "1.4rem",
           }}
         >
-          ◉
+          
         </div>
       ))}
 
