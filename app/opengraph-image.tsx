@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "🥁 全身太鼓 ZENSHIN TAIKO | 体で太鼓を叩け！";
+export const alt = " 全身太鼓 ZENSHIN TAIKO | 体で太鼓を叩け！";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -20,7 +20,7 @@ export default function Image() {
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ fontSize: 120, marginBottom: 20, filter: "drop-shadow(0 0 40px rgba(239,68,68,0.7))" }}>🥁</div>
+        <div style={{ fontSize: 120, marginBottom: 20, filter: "drop-shadow(0 0 40px rgba(239,68,68,0.7))" }}></div>
         <div style={{ fontSize: 72, fontWeight: 900, color: "#fbbf24", marginBottom: 12, textShadow: "0 0 30px rgba(251,191,36,0.5)" }}>
           全身太鼓
         </div>

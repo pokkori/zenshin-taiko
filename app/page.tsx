@@ -50,14 +50,14 @@ export default function HomePage() {
       </Link>
       <div className="w-full max-w-sm space-y-3">
         {[
-          { icon: "📷", title: "カメラを許可する", desc: "フロントカメラで全身を映す（明るい場所推奨）" },
-          { icon: "🙋", title: "体全体が太鼓になる", desc: "肩・肘・手首・膝などが打点に変わる" },
-          { icon: "🥁", title: "動かすと音が鳴る", desc: "速く動かすほど大きな音！リズムよく叩こう" },
-          { icon: "📤", title: "演奏動画をシェア", desc: "スコアをXに投稿して友達に挑戦状を送ろう" },
+          { icon: "", title: "カメラを許可する", desc: "フロントカメラで全身を映す（明るい場所推奨）" },
+          { icon: "", title: "体全体が太鼓になる", desc: "肩・肘・手首・膝などが打点に変わる" },
+          { icon: "", title: "動かすと音が鳴る", desc: "速く動かすほど大きな音！リズムよく叩こう" },
+          { icon: "", title: "演奏動画をシェア", desc: "スコアをXに投稿して友達に挑戦状を送ろう" },
         ].map((item, i) => (
           <div key={i} className="flex gap-3 items-center p-3 rounded-xl"
             style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
-            <span className="text-2xl">{item.icon}</span>
+            <span className="text-2xl" aria-hidden="true">{item.icon}</span>
             <div>
               <div className="font-bold text-amber-200 text-sm">{item.title}</div>
               <div className="text-xs text-amber-600">{item.desc}</div>
@@ -72,8 +72,8 @@ export default function HomePage() {
           <a href="https://twitter.com/levona_design" className="underline hover:text-amber-700" aria-label="Xでお問い合わせ（@levona_design）">お問い合わせ: X @levona_design</a>
         </p>
         <div className="mt-2 space-x-4">
-          <a href="/privacy" className="underline hover:text-amber-700" aria-label="プライバシーポリシーを見る">プライバシーポリシー</a>
-          <a href="/legal" className="underline hover:text-amber-700" aria-label="特定商取引法に基づく表記を見る">特商法表記</a>
+          <a href="/privacy" aria-label="プライバシーポリシーを見る" className="underline hover:text-amber-700" >プライバシーポリシー</a>
+          <a href="/legal" aria-label="特定商取引法に基づく表示" className="underline hover:text-amber-700" >特商法表記</a>
         </div>
       </footer>
     </div>
