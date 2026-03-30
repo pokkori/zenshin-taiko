@@ -50,7 +50,7 @@ export default function TaikoGame() {
     stopGame();
   }, [score, hitCount, stopGame]);
 
-  const shareText = ` 全身太鼓ZENSHINで${hitCount}回ヒット！\nスコア: ${score}点\n体で太鼓を叩いてみた！\n#全身太鼓 #ZENSHINTAIKO\nhttps://zenshin-taiko.vercel.app`;
+  const shareText = `全身太鼓ZENSHINで${hitCount}回ヒット!\nスコア: ${score}点\n体で太鼓を叩いてみた!\n#全身太鼓 #ZENSHINTAIKO\nhttps://zenshin-taiko.vercel.app`;
   const shareUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText);
 
   return (
@@ -66,7 +66,13 @@ export default function TaikoGame() {
             <span className="text-xs text-yellow-500" aria-label={`ベストスコア ${bestScore}点`}>Best:{bestScore}</span>
           )}
           {activeTab === "camera" && (
-            <button onClick={toggleMute} className="text-xl min-h-[44px] min-w-[44px]" aria-label={isMuted ? "ミュートを解除する" : "ミュートにする"}>{isMuted ? "消音" : "音ON"}</button>
+            <button onClick={toggleMute} className="min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label={isMuted ? "ミュートを解除する" : "ミュートにする"}>
+              {isMuted ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z" fill="#78350f"/><line x1="23" y1="9" x2="17" y2="15" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/><line x1="17" y1="9" x2="23" y2="15" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/></svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z" fill="#fbbf24"/><path d="M15.54 8.46a5 5 0 010 7.07" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round"/><path d="M19.07 4.93a10 10 0 010 14.14" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round"/></svg>
+              )}
+            </button>
           )}
         </div>
       </div>
@@ -74,7 +80,7 @@ export default function TaikoGame() {
       {/* タブ */}
       <div className="w-full max-w-sm px-3 mb-2">
         <div className="flex rounded-xl overflow-hidden"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
+          style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.08)" }}>
           <button
             onClick={() => handleTabChange("rhythm")}
             className="flex-1 py-2 text-sm font-bold transition-all min-h-[44px]"
@@ -133,13 +139,18 @@ export default function TaikoGame() {
             {phase === "idle" && (
               <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl"
                 style={{ background: "rgba(0,0,0,0.85)" }}>
-                <div className="text-6xl mb-4"></div>
-                <h2 className="text-2xl font-black mb-2" style={{ color: "#fbbf24" }}>全身太鼓</h2>
-                <p className="text-amber-300 text-sm text-center px-8 mb-4">体全体が太鼓になる！<br />カメラを許可してプレイ開始</p>
+                <svg width="56" height="56" viewBox="0 0 64 64" aria-hidden="true" className="mb-4">
+                  <ellipse cx="32" cy="36" rx="24" ry="18" fill="#b91c1c" />
+                  <ellipse cx="32" cy="32" rx="24" ry="18" fill="#ef4444" />
+                  <ellipse cx="32" cy="32" rx="18" ry="13" fill="#fbbf24" />
+                  <text x="32" y="37" textAnchor="middle" fontSize="14" fontWeight="bold" fill="#7f1d1d">太鼓</text>
+                </svg>
+                <h2 className="text-2xl font-black mb-2 text-slate-100">全身太鼓</h2>
+                <p className="text-slate-300 text-sm text-center px-8 mb-4">体全体が太鼓になる!<br />カメラを許可してプレイ開始</p>
                 {streakData && streakData.count > 0 && (
                   <div className="mb-4 px-4 py-2 rounded-xl text-center"
-                    style={{ background: "rgba(251,191,36,0.15)", border: "1px solid rgba(251,191,36,0.3)" }}>
-                    <p className="text-yellow-300 font-bold text-sm">{streakData.count}日連続プレイ中</p>
+                    style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                    <p className="text-slate-200 font-bold text-sm">{streakData.count}日連続プレイ中</p>
                     {getStreakMilestoneMessage(streakData.count) && (
                       <p className="text-amber-400 text-xs mt-0.5">{getStreakMilestoneMessage(streakData.count)}</p>
                     )}
@@ -158,9 +169,12 @@ export default function TaikoGame() {
             {phase === "loading" && (
               <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl"
                 style={{ background: "rgba(0,0,0,0.85)" }}>
-                <div className="text-4xl mb-4 animate-spin"></div>
-                <p className="text-amber-300 animate-pulse">AIモデル読み込み中...</p>
-                <p className="text-amber-600 text-xs mt-2">初回は30秒ほどかかります</p>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="mb-4 animate-spin" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" stroke="rgba(251,191,36,0.3)" strokeWidth="3" />
+                  <path d="M12 2a10 10 0 019.8 8" stroke="#fbbf24" strokeWidth="3" strokeLinecap="round" />
+                </svg>
+                <p className="text-slate-200 animate-pulse">AIモデル読み込み中...</p>
+                <p className="text-slate-400 text-xs mt-2">初回は30秒ほどかかります</p>
               </div>
             )}
 
@@ -168,14 +182,17 @@ export default function TaikoGame() {
             {phase === "ready" && (
               <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl"
                 style={{ background: "rgba(0,0,0,0.85)" }}>
-                <div className="text-5xl mb-3"></div>
-                <p className="text-amber-300 font-bold mb-2">準備完了！</p>
-                <p className="text-amber-600 text-xs text-center px-6 mb-4">カメラ前から1～2m離れて<br />全身が映るようにしてください</p>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="mb-3" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" fill="#22c55e" />
+                  <path d="M7 12l3 3 7-7" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <p className="text-slate-200 font-bold mb-2">準備完了!</p>
+                <p className="text-slate-400 text-xs text-center px-6 mb-4">カメラ前から1~2m離れて<br />全身が映るようにしてください</p>
                 {/* 直前のスコア結果 */}
                 {lastScore !== null && (
                   <div className="mb-4 px-5 py-3 rounded-2xl text-center w-full max-w-xs"
-                    style={{ background: "rgba(251,191,36,0.12)", border: "1px solid rgba(251,191,36,0.3)" }}>
-                    <p className="text-yellow-300 font-black text-lg">{lastScore}点 / {lastHitCount}回ヒット</p>
+                    style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                    <p className="text-slate-100 font-black text-lg">{lastScore}点 / {lastHitCount}回ヒット</p>
                     <a
                       href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`全身太鼓で${lastScore}点達成！${lastHitCount}回ヒット！ #全身太鼓ゲーム https://zenshin-taiko.vercel.app`)}`}
                       target="_blank"
@@ -204,7 +221,10 @@ export default function TaikoGame() {
             {(phase === "error" || error) && (
               <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl"
                 style={{ background: "rgba(0,0,0,0.85)" }}>
-                <div className="text-4xl mb-3"></div>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="mb-3" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" fill="#ef4444" />
+                  <path d="M8 8l8 8M16 8l-8 8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
                 <p className="text-red-400 text-sm text-center px-6">{error}</p>
                 <button onClick={() => window.location.reload()}
                   className="mt-4 px-8 py-2 rounded-xl font-bold text-white text-sm min-h-[44px]"

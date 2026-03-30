@@ -336,18 +336,23 @@ export default function RhythmGame() {
   if (gameState === "idle") {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60dvh] px-4 py-8 select-none">
-        <div className="text-7xl mb-4"></div>
-        <h2 className="text-2xl font-black mb-1" style={{ color: "#fbbf24" }}>リズムチャレンジ</h2>
-        <p className="text-amber-400 text-sm text-center mb-2">カメラ不要！タップでリズムゲーム</p>
+        <svg width="56" height="56" viewBox="0 0 64 64" aria-hidden="true" className="mb-4">
+          <ellipse cx="32" cy="36" rx="24" ry="18" fill="#b91c1c" />
+          <ellipse cx="32" cy="32" rx="24" ry="18" fill="#ef4444" />
+          <ellipse cx="32" cy="32" rx="18" ry="13" fill="#fbbf24" />
+          <text x="32" y="37" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#7f1d1d">Rhythm</text>
+        </svg>
+        <h2 className="text-2xl font-black mb-1 text-slate-100">リズムチャレンジ</h2>
+        <p className="text-slate-300 text-sm text-center mb-2">カメラ不要! タップでリズムゲーム</p>
         <div className="mb-6 space-y-2 w-full max-w-xs">
           {[
-            { icon: "", text: "左エリアをタップ → 左拍子" },
-            { icon: "", text: "右エリアをタップ → 右拍子" },
-            { icon: "", text: "両エリア同時 → ドン！" },
-            { icon: "️", text: "30秒間でハイスコアを目指せ" },
+            { icon: "L", color: "#3b82f6", text: "左エリアをタップ -> 左拍子" },
+            { icon: "R", color: "#ef4444", text: "右エリアをタップ -> 右拍子" },
+            { icon: "LR", color: "#f59e0b", text: "両エリア同時 -> ドン!" },
+            { icon: "30s", color: "#22c55e", text: "30秒間でハイスコアを目指せ" },
           ].map((item, i) => (
-            <div key={i} className="flex gap-2 items-center text-sm text-amber-300">
-              <span>{item.icon}</span>
+            <div key={i} className="flex gap-2 items-center text-sm text-slate-200">
+              <span className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black text-slate-100" style={{ background: item.color + "33", border: `1px solid ${item.color}55` }}>{item.icon}</span>
               <span>{item.text}</span>
             </div>
           ))}
@@ -355,7 +360,7 @@ export default function RhythmGame() {
         <button
           onClick={startGame}
           aria-label="ゲームをスタートする"
-          className="px-12 py-4 rounded-2xl font-black text-white text-lg transition-all active:scale-95"
+          className="px-12 py-4 rounded-2xl font-black text-slate-100 text-lg transition-all active:scale-[0.97] min-h-[44px]"
           style={{
             background: "linear-gradient(135deg,#ef4444,#991b1b)",
             boxShadow: "0 0 24px rgba(239,68,68,0.5)",
@@ -376,11 +381,14 @@ export default function RhythmGame() {
 
     return (
       <div className="flex flex-col items-center px-4 py-8 select-none">
-        <div className="text-5xl mb-3"></div>
-        <h2 className="text-xl font-black mb-4" style={{ color: "#fbbf24" }}>リザルト</h2>
+        <svg width="48" height="48" viewBox="0 0 64 64" aria-hidden="true" className="mb-3">
+          <circle cx="32" cy="32" r="26" fill="none" stroke="#fbbf24" strokeWidth="3" />
+          <path d="M20 32l8 8 16-16" stroke="#fbbf24" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        </svg>
+        <h2 className="text-xl font-black mb-4 text-slate-100">リザルト</h2>
 
         <div className="w-full max-w-xs rounded-2xl p-5 mb-4 space-y-3"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(251,191,36,0.2)" }}>
+          style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.08)" }}>
           <div className="text-center">
             <div className="text-6xl font-black" style={{ color: rankColors[rank] }}>{rank}</div>
             <div className="text-amber-300 text-sm">RANK</div>
