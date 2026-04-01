@@ -177,23 +177,81 @@ export default function RhythmGame() {
     } catch (_e) { /* non-fatal */ }
   }, []);
 
-  // BGMビート（メトロノーム感）
+  // BGMビート（メトロノーム感 ＝ パーカッション声部）
   const playBeatTick = useCallback(() => {
     if (isMutedRef.current) return;
     try {
       if (!audioCtxRef.current) audioCtxRef.current = new AudioContext();
       const ctx = audioCtxRef.current;
+      // パーカッション: 和太鼓風ノイズ + 低音サイン波
+      const bufSize = Math.floor(ctx.sampleRate * 0.12);
+      const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufSize);
+      const noise = ctx.createBufferSource();
+      const noiseGain = ctx.createGain();
+      const lpf = ctx.createBiquadFilter();
+      lpf.type = "lowpass";
+      lpf.frequency.value = 200;
+      noise.buffer = buf;
+      noise.connect(lpf);
+      lpf.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+      noiseGain.gain.setValueAtTime(0.25, ctx.currentTime);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+      noise.start(ctx.currentTime);
+      // 低音体感サイン波
+      const kick = ctx.createOscillator();
+      const kickGain = ctx.createGain();
+      kick.connect(kickGain);
+      kickGain.connect(ctx.destination);
+      kick.type = "sine";
+      kick.frequency.setValueAtTime(90, ctx.currentTime);
+      kick.frequency.exponentialRampToValueAtTime(35, ctx.currentTime + 0.08);
+      kickGain.gain.setValueAtTime(0.18, ctx.currentTime);
+      kickGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+      kick.start(ctx.currentTime);
+      kick.stop(ctx.currentTime + 0.08);
+    } catch (_e) { /* non-fatal */ }
+  }, []);
+
+  // BGMメロディ声部（和風5音音階 E4-G4-A4-B4-D5）
+  const melodyBeatRef = useRef(0);
+  const MELODY_NOTES = [329.63, 392.0, 440.0, 493.88, 587.33]; // E4 G4 A4 B4 D5
+  const MELODY_PATTERN = [0, 2, 4, 2, 1, 3, 4, 3]; // 音階インデックス循環
+
+  const playMelodyNote = useCallback(() => {
+    if (isMutedRef.current) return;
+    try {
+      if (!audioCtxRef.current) audioCtxRef.current = new AudioContext();
+      const ctx = audioCtxRef.current;
+      const noteIdx = MELODY_PATTERN[melodyBeatRef.current % MELODY_PATTERN.length];
+      const freq = MELODY_NOTES[noteIdx];
+      melodyBeatRef.current++;
+      // メロディ: 三角波でやわらかい和風トーン
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.type = "triangle";
-      osc.frequency.setValueAtTime(80, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.05);
-      gain.gain.setValueAtTime(0.15, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
       osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.05);
+      osc.stop(ctx.currentTime + 0.35);
+      // バス: E2固定ドローン（2拍に1回）
+      if (melodyBeatRef.current % 2 === 0) {
+        const bass = ctx.createOscillator();
+        const bassGain = ctx.createGain();
+        bass.connect(bassGain);
+        bassGain.connect(ctx.destination);
+        bass.type = "sawtooth";
+        bass.frequency.setValueAtTime(82.41, ctx.currentTime); // E2
+        bassGain.gain.setValueAtTime(0.06, ctx.currentTime);
+        bassGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
+        bass.start(ctx.currentTime);
+        bass.stop(ctx.currentTime + 0.28);
+      }
     } catch (_e) { /* non-fatal */ }
   }, []);
 
@@ -353,11 +411,21 @@ export default function RhythmGame() {
       try { audioCtxRef.current = new AudioContext(); } catch (_e) { /* non-fatal */ }
     }
 
+    melodyBeatRef.current = 0;
     startTimeRef.current = Date.now();
     gameStateRef.current = "playing";
     setGameState("playing");
+    // メロディ声部スケジューラー（BPM120 = 500ms 間隔）
+    if (beatTimerRef.current) clearInterval(beatTimerRef.current);
+    beatTimerRef.current = setInterval(() => {
+      if (gameStateRef.current !== "playing") {
+        if (beatTimerRef.current) clearInterval(beatTimerRef.current);
+        return;
+      }
+      playMelodyNote();
+    }, BEAT_INTERVAL);
     rafRef.current = requestAnimationFrame(gameLoop);
-  }, [gameLoop]);
+  }, [gameLoop, playMelodyNote]);
 
   useEffect(() => {
     return () => {
