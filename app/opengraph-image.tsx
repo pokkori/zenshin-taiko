@@ -20,7 +20,6 @@ export default function Image() {
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ fontSize: 120, marginBottom: 20, filter: "drop-shadow(0 0 40px rgba(239,68,68,0.7))" }}></div>
         <div style={{ fontSize: 72, fontWeight: 900, color: "#fbbf24", marginBottom: 12, textShadow: "0 0 30px rgba(251,191,36,0.5)" }}>
           全身太鼓
         </div>

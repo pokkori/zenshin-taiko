@@ -15,13 +15,13 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: "全身太鼓 ZENSHIN TAIKO",
     locale: "ja_JP",
-    images: [{ url: `${SITE_URL}/og.svg`, width: 1200, height: 630, alt: "全身太鼓 ZENSHIN TAIKO" }],
+    images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630, alt: "全身太鼓 ZENSHIN TAIKO" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "全身太鼓 ZENSHIN TAIKO",
     description: "体全体が太鼓になる！カメラで全身を感知してリズム演奏",
-    images: [`${SITE_URL}/og.svg`],
+    images: [`${SITE_URL}/og.png`],
   },
 };
 const jsonLd = {

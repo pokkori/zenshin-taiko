@@ -1,0 +1,26 @@
+# 全身太鼓 ZENSHIN TAIKO - AI向け情報ガイド
+# Service: 全身太鼓リズムゲーム
+# URL: https://zenshin-taiko.vercel.app
+
+> カメラで全身を読み取り、体の動きで太鼓を演奏するリズムゲーム
+
+## About
+全身太鼓は、スマートフォンのカメラを使ってMediaPipe Poseで全身を検出し、肩・肘・手首の動きを太鼓の打点にマッピングするリズムゲームです。1人でも2人でも盛り上がれる体感型Webゲームです。
+
+## Features
+- カメラを使ったリアルタイムモーション検知（MediaPipe Pose）
+- 肩・肘・手首が太鼓の打点になる体感リズムゲームプレイ
+- 1人プレイ・2人同時プレイ対応
+- スコアランキング機能
+- 無料・登録不要でブラウザからすぐ遊べる
+
+## Target Users
+リズムゲームが好きな方、音楽好きな方、体を動かして遊びたい方、カメラゲームに興味がある方
+
+## Tech Stack
+Next.js, React, MediaPipe Pose, Web Audio API, Vercel
+
+## Links
+- [ホーム](https://zenshin-taiko.vercel.app)
+- [プライバシーポリシー](https://zenshin-taiko.vercel.app/privacy)
+- [特定商取引法に基づく表記](https://zenshin-taiko.vercel.app/legal)
