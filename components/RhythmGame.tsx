@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import ComboCounter from "@/components/ComboCounter";
+import ScorePopup from "@/components/ScorePopup";
 
 // ===== 型定義 =====
 type Zone = "left" | "right" | "both";
@@ -118,6 +120,8 @@ export default function RhythmGame() {
   const [missCount, setMissCount] = useState(0);
   const [maxCombo, setMaxCombo] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
+  const [scorePopups, setScorePopups] = useState<{ id: number; score: number; x: number; y: number; combo: number }[]>([]);
+  const popupIdRef = useRef(0);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const startTimeRef = useRef<number>(0);
@@ -244,6 +248,15 @@ export default function RhythmGame() {
     const eid = effectIdRef.current++;
     setEffects(prev => [...prev, { id: eid, judgment, zone: closest?.zone ?? zone, createdAt: Date.now() }]);
     setTimeout(() => setEffects(prev => prev.filter(e => e.id !== eid)), 600);
+
+    // ScorePopup
+    if (totalPts > 0) {
+      const pid = popupIdRef.current++;
+      const isLeft = zone === "left";
+      const px = isLeft ? window.innerWidth * 0.25 : window.innerWidth * 0.75;
+      const py = window.innerHeight * 0.4;
+      setScorePopups(prev => [...prev, { id: pid, score: totalPts, x: px, y: py, combo: newCombo }]);
+    }
 
     playHitSound(judgment);
   }, [playHitSound]);
@@ -442,12 +455,8 @@ export default function RhythmGame() {
         <h2 className="text-xl font-black mb-4 text-slate-100">リザルト</h2>
 
         <div
-          className="w-full max-w-xs rounded-2xl p-5 mb-4 space-y-3 score-card-in"
+          className={`w-full max-w-xs rounded-2xl p-5 mb-4 space-y-3 score-card-in ${isHighRank ? "glass-game" : "glass-dark"}`}
           style={{
-            background: isHighRank
-              ? "linear-gradient(135deg,#1e1b4b,#312e81)"
-              : "rgba(255,255,255,0.03)",
-            backdropFilter: "blur(16px)",
             border: isHighRank ? "2px solid #FFD93D" : "1px solid rgba(255,255,255,0.08)",
             boxShadow: isHighRank ? "0 0 40px rgba(255,217,61,0.45)" : "none",
           }}
@@ -537,14 +546,23 @@ export default function RhythmGame() {
   // ===== Playing画面 =====
   return (
     <div className="flex flex-col select-none" style={{ minHeight: "calc(100dvh - 50px)" }}>
+      {/* ScorePopup表示 */}
+      {scorePopups.map(p => (
+        <ScorePopup
+          key={p.id}
+          score={p.score}
+          x={p.x}
+          y={p.y}
+          combo={p.combo}
+          onDone={() => setScorePopups(prev => prev.filter(s => s.id !== p.id))}
+        />
+      ))}
       {/* ステータスバー */}
       <div className="flex items-center justify-between px-3 py-1.5"
         style={{ background: "rgba(0,0,0,0.5)" }}>
         <div className="flex items-center gap-3">
           <span className="text-xs text-amber-500 font-bold">{score.toLocaleString()}pt</span>
-          {combo >= 5 && (
-            <span className="text-xs font-black" style={{ color: "#fbbf24" }}>{combo} COMBO!</span>
-          )}
+          <ComboCounter combo={combo} />
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs font-black" style={{ color: timeLeft <= 10 ? "#ef4444" : "#22c55e" }}>
