@@ -473,8 +473,11 @@ export default function RhythmGame() {
           </span>
           <button onClick={() => { isMutedRef.current = !isMutedRef.current; setIsMuted(isMutedRef.current); }}
             aria-label={isMuted ? "サウンドをオンにする" : "サウンドをオフにする（ミュート）"}
-            className="text-base">
-            {isMuted ? "" : ""}
+            className="min-h-[36px] min-w-[36px] flex items-center justify-center">
+            {isMuted
+              ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11 5L6 9H2v6h4l5 4V5z" fill="#78350f"/><line x1="23" y1="9" x2="17" y2="15" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/><line x1="17" y1="9" x2="23" y2="15" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/></svg>
+              : <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11 5L6 9H2v6h4l5 4V5z" fill="#fbbf24"/><path d="M15.54 8.46a5 5 0 010 7.07" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round"/><path d="M19.07 4.93a10 10 0 010 14.14" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round"/></svg>
+            }
           </button>
         </div>
       </div>
@@ -485,7 +488,7 @@ export default function RhythmGame() {
           <span className="text-base font-black animate-bounce"
             style={{ color: JUDGMENT_COLORS[lastJudgment] }}>
             {lastJudgment}
-            {lastJudgment === "PERFECT" && " "}
+            {lastJudgment === "PERFECT" && <svg className="inline w-4 h-4 ml-1" viewBox="0 0 24 24" fill="#fbbf24"><polygon points="12,2 15.1,8.3 22,9.3 17,14.1 18.2,21 12,17.8 5.8,21 7,14.1 2,9.3 8.9,8.3"/></svg>}
           </span>
         )}
       </div>
@@ -538,7 +541,9 @@ function RhythmZone({ zone, markers, onTap, getMarkerStyle, effects }: RhythmZon
   const [pressed, setPressed] = useState(false);
   const color = ZONE_COLORS[zone];
   const label = zone === "left" ? "左\nLEFT" : "右\nRIGHT";
-  const icon = zone === "left" ? "" : "";
+  const IconSvg = zone === "left"
+    ? () => <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><ellipse cx="16" cy="18" rx="12" ry="9" fill="#b91c1c"/><ellipse cx="16" cy="16" rx="12" ry="9" fill="#ef4444"/><ellipse cx="16" cy="16" rx="9" ry="6" fill="#fbbf24"/><text x="16" y="20" textAnchor="middle" fontSize="6" fontWeight="bold" fill="#7f1d1d">左</text></svg>
+    : () => <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><ellipse cx="16" cy="18" rx="12" ry="9" fill="#7f1d1d"/><ellipse cx="16" cy="16" rx="12" ry="9" fill="#dc2626"/><ellipse cx="16" cy="16" rx="9" ry="6" fill="#fbbf24"/><text x="16" y="20" textAnchor="middle" fontSize="6" fontWeight="bold" fill="#7f1d1d">右</text></svg>;
 
   const handlePress = () => {
     setPressed(true);
@@ -590,11 +595,15 @@ function RhythmZone({ zone, markers, onTap, getMarkerStyle, effects }: RhythmZon
             background: `radial-gradient(circle, ${ZONE_COLORS[m.zone]}cc, ${ZONE_COLORS[m.zone]}44)`,
             border: `2px solid ${ZONE_COLORS[m.zone]}`,
             boxShadow: `0 0 12px ${ZONE_COLORS[m.zone]}88`,
-            color: "#fff",
-            fontSize: "1.4rem",
           }}
         >
-          
+          <svg width="22" height="22" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <ellipse cx="16" cy="20" rx="11" ry="8" fill="rgba(0,0,0,0.4)"/>
+            <ellipse cx="16" cy="16" rx="11" ry="8" fill="none" stroke="#fff" strokeWidth="1.5"/>
+            <ellipse cx="16" cy="16" rx="7" ry="4.5" fill="rgba(255,255,255,0.7)"/>
+            <rect x="6" y="8" width="3" height="10" rx="1.5" fill="#fff" opacity="0.8"/>
+            <rect x="23" y="8" width="3" height="10" rx="1.5" fill="#fff" opacity="0.8"/>
+          </svg>
         </div>
       ))}
 
@@ -621,7 +630,7 @@ function RhythmZone({ zone, markers, onTap, getMarkerStyle, effects }: RhythmZon
         className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center pointer-events-none"
         style={{ color: `${color}88` }}
       >
-        <div className="text-2xl">{icon}</div>
+        <IconSvg />
         <div className="text-xs font-bold whitespace-pre-line leading-tight" style={{ fontSize: "0.6rem" }}>
           {label}
         </div>

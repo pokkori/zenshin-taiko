@@ -5,6 +5,7 @@ import { useTaikoGame } from "@/hooks/useTaikoGame";
 import { BODY_PART_COLORS } from "@/lib/rhythmPatterns";
 import dynamic from "next/dynamic";
 import { updateStreak, loadStreak, getStreakMilestoneMessage, type StreakData } from "@/lib/streak";
+import OrbBackground from "@/components/OrbBackground";
 
 const RhythmGame = dynamic(() => import("@/components/RhythmGame"), { ssr: false });
 
@@ -54,8 +55,9 @@ export default function TaikoGame() {
   const shareUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText);
 
   return (
-    <div className="flex flex-col min-h-dvh items-center"
-      style={{ background: "linear-gradient(160deg,#0a0500,#1a0a00)" }}>
+    <div className="flex flex-col min-h-dvh items-center relative"
+      style={{ background: "linear-gradient(160deg,#120208,#1a0a00,#120208)" }}>
+      <OrbBackground />
 
       {/* Header */}
       <div className="w-full max-w-sm flex items-center justify-between px-3 py-2">
