@@ -1,11 +1,48 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { useTaikoGame } from "@/hooks/useTaikoGame";
 import { BODY_PART_COLORS } from "@/lib/rhythmPatterns";
 import dynamic from "next/dynamic";
 import { updateStreak, loadStreak, getStreakMilestoneMessage, type StreakData } from "@/lib/streak";
 import OrbBackground from "@/components/OrbBackground";
+
+// カメラモード: クリア後コンフェッティ (15粒)
+const VICTORY_CONFETTI_COLORS_TAIKO = ["#FFD93D", "#6366f1", "#f43f5e", "#22c55e", "#fbbf24", "#a855f7", "#ef4444"];
+
+function VictoryConfettiTaiko() {
+  const pieces = useMemo(() =>
+    Array.from({ length: 15 }, (_, i) => ({
+      id: i,
+      left: 5 + Math.random() * 90,
+      fallDur: (2.4 + Math.random() * 1.4).toFixed(2),
+      fallDelay: (Math.random() * 0.8).toFixed(2),
+      swayDur: (0.9 + Math.random() * 0.6).toFixed(2),
+      color: VICTORY_CONFETTI_COLORS_TAIKO[i % VICTORY_CONFETTI_COLORS_TAIKO.length],
+      w: 7 + Math.floor(Math.random() * 7),
+      h: 5 + Math.floor(Math.random() * 5),
+    })), []);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 200 }}>
+      {pieces.map(p => (
+        <div
+          key={p.id}
+          className="victory-confetti-piece"
+          style={{
+            left: `${p.left}%`,
+            width: `${p.w}px`,
+            height: `${p.h}px`,
+            background: p.color,
+            "--fall-dur": `${p.fallDur}s`,
+            "--fall-delay": `${p.fallDelay}s`,
+            "--sway-dur": `${p.swayDur}s`,
+          } as React.CSSProperties}
+        />
+      ))}
+    </div>
+  );
+}
 
 const RhythmGame = dynamic(() => import("@/components/RhythmGame"), { ssr: false });
 
@@ -23,6 +60,8 @@ export default function TaikoGame() {
   const [streakData, setStreakData] = useState<StreakData | null>(null);
   const [lastScore, setLastScore] = useState<number | null>(null);
   const [lastHitCount, setLastHitCount] = useState<number | null>(null);
+  const [showConfettiCamera, setShowConfettiCamera] = useState(false);
+  const [isNewBest, setIsNewBest] = useState(false);
 
   useEffect(() => {
     const b = localStorage.getItem("taiko_best");
@@ -40,9 +79,15 @@ export default function TaikoGame() {
 
   const handleStop = useCallback(() => {
     const prev = parseInt(localStorage.getItem("taiko_best") ?? "0");
-    if (score > prev) {
+    const newBest = score > prev;
+    if (newBest) {
       localStorage.setItem("taiko_best", String(score));
       setBestScore(score);
+      setIsNewBest(true);
+      setShowConfettiCamera(true);
+      setTimeout(() => setShowConfettiCamera(false), 3500);
+    } else {
+      setIsNewBest(false);
     }
     const updated = updateStreak("zenshin_taiko");
     setStreakData(updated);
@@ -58,6 +103,7 @@ export default function TaikoGame() {
     <div className="flex flex-col min-h-dvh items-center relative"
       style={{ background: "linear-gradient(160deg,#120208,#1a0a00,#120208)" }}>
       <OrbBackground />
+      {showConfettiCamera && <VictoryConfettiTaiko />}
 
       {/* Header */}
       <div className="w-full max-w-sm flex items-center justify-between px-3 py-2">
@@ -192,8 +238,20 @@ export default function TaikoGame() {
                 <p className="text-slate-400 text-xs text-center px-6 mb-4">カメラ前から1~2m離れて<br />全身が映るようにしてください</p>
                 {/* 直前のスコア結果 */}
                 {lastScore !== null && (
-                  <div className="mb-4 px-5 py-3 rounded-2xl text-center w-full max-w-xs"
-                    style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <div
+                    className="mb-4 px-5 py-3 rounded-2xl text-center w-full max-w-xs score-card-in"
+                    style={{
+                      background: isNewBest ? "linear-gradient(135deg,#1e1b4b,#312e81)" : "rgba(255,255,255,0.03)",
+                      backdropFilter: "blur(16px)",
+                      border: isNewBest ? "2px solid #FFD93D" : "1px solid rgba(255,255,255,0.08)",
+                      boxShadow: isNewBest ? "0 0 40px rgba(255,217,61,0.45)" : "none",
+                    }}
+                  >
+                    {isNewBest && (
+                      <p className="font-black text-sm mb-1" style={{ color: "#FFD93D", textShadow: "0 0 12px rgba(255,217,61,0.7)" }}>
+                        NEW BEST !
+                      </p>
+                    )}
                     <p className="text-slate-100 font-black text-lg">{lastScore}点 / {lastHitCount}回ヒット</p>
                     <a
                       href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`全身太鼓で${lastScore}点達成！${lastHitCount}回ヒット！ #全身太鼓ゲーム https://zenshin-taiko.vercel.app`)}`}

@@ -59,3 +59,39 @@ body {
 }
 
 .tabular-nums { font-variant-numeric: tabular-nums; }
+
+/* === 勝利非対称演出 === */
+@keyframes winner-glow-pulse {
+  0%, 100% { box-shadow: 0 0 32px #FFD93D, 0 0 64px rgba(255,217,61,0.45), inset 0 0 24px rgba(255,217,61,0.08); }
+  50%       { box-shadow: 0 0 56px #FFD93D, 0 0 96px rgba(255,217,61,0.65), inset 0 0 36px rgba(255,217,61,0.14); }
+}
+@keyframes victory-badge-in {
+  0%   { opacity: 0; transform: scale(0.4) translateY(20px); }
+  65%  { opacity: 1; transform: scale(1.12) translateY(-4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes victory-confetti-fall {
+  0%   { transform: translateY(-80px) rotate(0deg) scaleX(1);   opacity: 1; }
+  80%  { opacity: 0.8; }
+  100% { transform: translateY(110vh) rotate(800deg) scaleX(-1); opacity: 0; }
+}
+@keyframes victory-confetti-sway {
+  0%, 100% { margin-left: 0; }
+  33%       { margin-left: 18px; }
+  66%       { margin-left: -14px; }
+}
+.victory-confetti-piece {
+  position: fixed;
+  top: -80px;
+  border-radius: 2px;
+  animation:
+    victory-confetti-fall var(--fall-dur, 2.8s) cubic-bezier(0.23,0.58,0.49,1) var(--fall-delay, 0s) forwards,
+    victory-confetti-sway var(--sway-dur, 1.1s) ease-in-out var(--fall-delay, 0s) infinite;
+}
+@keyframes score-card-in {
+  0%   { opacity: 0; transform: scale(0.7) translateY(40px); }
+  70%  { opacity: 1; transform: scale(1.04) translateY(-6px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.score-card-in { animation: score-card-in 0.55s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
+.victory-badge-in { animation: victory-badge-in 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }

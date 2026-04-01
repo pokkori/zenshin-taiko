@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 
 // ===== 型定義 =====
 type Zone = "left" | "right" | "both";
@@ -48,6 +48,43 @@ function generateBeats(): { zone: Zone; beatTime: number }[] {
 }
 
 const BEAT_SCHEDULE = generateBeats();
+
+// ===== 勝利コンフェッティ =====
+const VICTORY_CONFETTI_COLORS = ["#FFD93D", "#6366f1", "#f43f5e", "#22c55e", "#fbbf24", "#a855f7", "#ef4444"];
+
+function VictoryConfetti() {
+  const pieces = useMemo(() =>
+    Array.from({ length: 15 }, (_, i) => ({
+      id: i,
+      left: 5 + Math.random() * 90,
+      fallDur: (2.4 + Math.random() * 1.4).toFixed(2),
+      fallDelay: (Math.random() * 0.8).toFixed(2),
+      swayDur: (0.9 + Math.random() * 0.6).toFixed(2),
+      color: VICTORY_CONFETTI_COLORS[i % VICTORY_CONFETTI_COLORS.length],
+      w: 7 + Math.floor(Math.random() * 7),
+      h: 5 + Math.floor(Math.random() * 5),
+    })), []);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 200 }}>
+      {pieces.map(p => (
+        <div
+          key={p.id}
+          className="victory-confetti-piece"
+          style={{
+            left: `${p.left}%`,
+            width: `${p.w}px`,
+            height: `${p.h}px`,
+            background: p.color,
+            "--fall-dur": `${p.fallDur}s`,
+            "--fall-delay": `${p.fallDelay}s`,
+            "--sway-dur": `${p.swayDur}s`,
+          } as React.CSSProperties}
+        />
+      ))}
+    </div>
+  );
+}
 
 // ===== カラー =====
 const ZONE_COLORS: Record<Zone, string> = {
@@ -378,19 +415,53 @@ export default function RhythmGame() {
     const accuracy = total > 0 ? Math.round(((perfectCountRef.current + goodCountRef.current) / total) * 100) : 0;
     const rank = score >= 8000 ? "S" : score >= 6000 ? "A" : score >= 4000 ? "B" : score >= 2000 ? "C" : "D";
     const rankColors: Record<string, string> = { S: "#fbbf24", A: "#22c55e", B: "#3b82f6", C: "#a855f7", D: "#6b7280" };
+    const isHighRank = rank === "S" || rank === "A";
 
     return (
-      <div className="flex flex-col items-center px-4 py-8 select-none">
-        <svg width="48" height="48" viewBox="0 0 64 64" aria-hidden="true" className="mb-3">
-          <circle cx="32" cy="32" r="26" fill="none" stroke="#fbbf24" strokeWidth="3" />
-          <path d="M20 32l8 8 16-16" stroke="#fbbf24" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        </svg>
+      <div className="flex flex-col items-center px-4 py-8 select-none relative">
+        {/* 高ランク時: コンフェッティ発火 */}
+        {isHighRank && <VictoryConfetti />}
+
+        {/* SVG トロフィー (高ランク) or チェックマーク (低ランク) */}
+        {isHighRank ? (
+          <svg width="56" height="56" viewBox="0 0 64 64" fill="none" aria-hidden="true" className="mb-3 victory-badge-in">
+            <rect x="24" y="52" width="16" height="6" rx="3" fill="#FFD93D"/>
+            <rect x="18" y="56" width="28" height="5" rx="2.5" fill="#F59E0B"/>
+            <rect x="27" y="44" width="10" height="10" rx="2" fill="#FDE68A"/>
+            <path d="M16 10h32v18c0 8.837-7.163 16-16 16S16 36.837 16 28V10z" fill="#FFD93D"/>
+            <path d="M16 14H8a6 6 0 006 6h2V14z" fill="#F59E0B"/>
+            <path d="M48 14h8a6 6 0 01-6 6h-2V14z" fill="#F59E0B"/>
+            <ellipse cx="32" cy="26" rx="8" ry="6" fill="#FEF3C7" opacity="0.4"/>
+          </svg>
+        ) : (
+          <svg width="48" height="48" viewBox="0 0 64 64" aria-hidden="true" className="mb-3">
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#fbbf24" strokeWidth="3" />
+            <path d="M20 32l8 8 16-16" stroke="#fbbf24" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
+        )}
         <h2 className="text-xl font-black mb-4 text-slate-100">リザルト</h2>
 
-        <div className="w-full max-w-xs rounded-2xl p-5 mb-4 space-y-3"
-          style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.08)" }}>
+        <div
+          className="w-full max-w-xs rounded-2xl p-5 mb-4 space-y-3 score-card-in"
+          style={{
+            background: isHighRank
+              ? "linear-gradient(135deg,#1e1b4b,#312e81)"
+              : "rgba(255,255,255,0.03)",
+            backdropFilter: "blur(16px)",
+            border: isHighRank ? "2px solid #FFD93D" : "1px solid rgba(255,255,255,0.08)",
+            boxShadow: isHighRank ? "0 0 40px rgba(255,217,61,0.45)" : "none",
+          }}
+        >
           <div className="text-center">
-            <div className="text-6xl font-black" style={{ color: rankColors[rank] }}>{rank}</div>
+            <div
+              className="text-6xl font-black"
+              style={{
+                color: rankColors[rank],
+                textShadow: isHighRank ? `0 0 24px ${rankColors[rank]}` : "none",
+              }}
+            >
+              {rank}
+            </div>
             <div className="text-amber-300 text-sm">RANK</div>
           </div>
           <div className="text-center">
@@ -433,8 +504,15 @@ export default function RhythmGame() {
           <button
             onClick={startGame}
             aria-label="もう一度プレイする"
-            className="flex-1 py-3 rounded-xl font-bold text-sm transition-all active:scale-95"
-            style={{ background: "linear-gradient(135deg,#ef4444,#991b1b)", color: "#fff" }}
+            className="flex-1 py-3 rounded-xl font-bold text-sm transition-all active:scale-95 min-h-[44px]"
+            style={{
+              background: isHighRank
+                ? "linear-gradient(135deg,#6366f1CC,#6366f199)"
+                : "linear-gradient(135deg,#ef4444,#991b1b)",
+              color: "#fff",
+              boxShadow: isHighRank ? "0 0 20px #6366f160" : "none",
+              border: isHighRank ? "1px solid #6366f188" : "none",
+            }}
           >
             もう一度
           </button>
@@ -442,10 +520,11 @@ export default function RhythmGame() {
             href={shareUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl font-bold text-sm"
+            aria-label="Xでリザルトをシェアする"
+            className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl font-bold text-sm min-h-[44px]"
             style={{ background: "#000", color: "#fff", border: "1px solid #333" }}
           >
-            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
             </svg>
             シェア
