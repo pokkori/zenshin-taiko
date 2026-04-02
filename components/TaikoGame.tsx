@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import { haptics } from "@/utils/haptics";
 import { useTaikoGame } from "@/hooks/useTaikoGame";
 import { BODY_PART_COLORS } from "@/lib/rhythmPatterns";
 import dynamic from "next/dynamic";
@@ -78,9 +79,11 @@ export default function TaikoGame() {
   }, [phase, stopGame]);
 
   const handleStop = useCallback(() => {
+    haptics.tap();
     const prev = parseInt(localStorage.getItem("taiko_best") ?? "0");
     const newBest = score > prev;
     if (newBest) {
+      haptics.success();
       localStorage.setItem("taiko_best", String(score));
       setBestScore(score);
       setIsNewBest(true);

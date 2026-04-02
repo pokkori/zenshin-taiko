@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import { haptics } from "@/utils/haptics";
 import ComboCounter from "@/components/ComboCounter";
 import ScorePopup from "@/components/ScorePopup";
 
@@ -316,6 +317,9 @@ export default function RhythmGame() {
       setScorePopups(prev => [...prev, { id: pid, score: totalPts, x: px, y: py, combo: newCombo }]);
     }
 
+    if (judgment === "PERFECT") { haptics.success(); }
+    else if (judgment === "GOOD") { haptics.tap(); }
+    else { haptics.error(); }
     playHitSound(judgment);
   }, [playHitSound]);
 
