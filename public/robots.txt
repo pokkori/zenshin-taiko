@@ -1,0 +1,32 @@
+User-agent: *
+Allow: /
+
+# AI Crawlers - Allow indexing for GEO (Generative Engine Optimization)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+Sitemap: https://zenshin-taiko.vercel.app/sitemap.xml
